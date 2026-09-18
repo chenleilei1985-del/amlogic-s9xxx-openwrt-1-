@@ -25,7 +25,7 @@ on:
 
 jobs:
   pack:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Package N1 Firmware
         uses: ophub/amlogic-s9xxx-openwrt@main
