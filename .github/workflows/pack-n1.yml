@@ -1,45 +1,20 @@
-name: Pack N1 Firmware
+name: Package N1 Firmware
 
 on:
   workflow_dispatch:
-    inputs:
-      rootfs_url:
-        description: "rootfs 直链（.tar 或 .tar.gz）"
-        required: true
-        type: string
-      kernel:
-        description: "内核版本"
-        required: true
-        default: "6.12.y"
-        type: choice
-        options:
-          - 6.12.y
-          - 6.6.y
-          - 6.1.y
-          - 5.15.y
-      size:
-        description: "ROOTFS 分区大小（MiB）"
-        required: false
-        default: "1024"
-        type: string
 
 jobs:
-  pack:
-    runs-on: ubuntu-24.04
+  package:
+    runs-on: ubuntu-latest
     steps:
-      - name: Package N1 Firmware
-        uses: ophub/amlogic-s9xxx-openwrt@main
-        with:
-          openwrt_path: ${{ inputs.rootfs_url }}
-          openwrt_board: s905d
-          openwrt_kernel: ${{ inputs.kernel }}
-          openwrt_size: ${{ inputs.size }}
-          openwrt_ip: 192.168.1.1
-          builder_name: N1-ImmortalWrt
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Upload Firmware
-        uses: actions/upload-artifact@v4
-        with:
-          name: N1-Firmware-${{ inputs.kernel }}
-          path: openwrt/out/*.img.gz
-          if-no-files-found: error
+      - name: Package OpenWrt for N1
+        uses: ophub/flippy-openwrt-actions@main
+        env:
+          OPENWRT_ARMSR: openwrt/bin/targets/*/*/*.tar.gz # 指向你编译好的 rootfs 相对路径或下载直链
+          PACKAGE_SOC: s905d # 斐讯N1的芯片型号
+          KERNEL_VERSION_NAME: 6.12.y # 可根据需要选择内核版本系列
+          KERNEL_AUTO_LATEST: true
+          OPENWRT_IP: 10.9.8.7
