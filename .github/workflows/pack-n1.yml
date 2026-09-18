@@ -2,35 +2,15 @@ name: Pack N1 Firmware
 
 on:
   workflow_dispatch:
-   **好，只做 Actions 打包。**
-
-下面给你一个**干净、可直接用的 GitHub Actions 工作流**，专门用来把你昨天编译出来的 `immortalwrt-armsr-armv8-generic-rootfs.tar`（或 `.tar.gz`）打包成 N1 可启动的 `.img.gz`。
-
-### 使用方法
-
-1. 在你的仓库新建文件：  
-   `.github/workflows/pack-n1.yml`
-
-2. 把下面全部内容复制进去保存。
-
-3. 到 Actions 页面 → 选择 **Pack N1 Firmware** → **Run workflow**  
-   - 填写你的 rootfs 直链（必须是可直接下载的 `.tar` 或 `.tar.gz` 地址）  
-   - 选择内核版本（推荐先选 `6.12.y`）
-
-```yaml
-name: Pack N1 Firmware
-
-on:
-  workflow_dispatch:
     inputs:
       rootfs_url:
-        description: 'rootfs 直链（.tar 或 .tar.gz）'
+        description: "rootfs 直链（.tar 或 .tar.gz）"
         required: true
         type: string
       kernel:
-        description: '内核版本'
+        description: "内核版本"
         required: true
-        default: '6.12.y'
+        default: "6.12.y"
         type: choice
         options:
           - 6.12.y
@@ -38,9 +18,9 @@ on:
           - 6.1.y
           - 5.15.y
       size:
-        description: 'ROOTFS 分区大小（MiB）'
+        description: "ROOTFS 分区大小（MiB）"
         required: false
-        default: '1024'
+        default: "1024"
         type: string
 
 jobs:
