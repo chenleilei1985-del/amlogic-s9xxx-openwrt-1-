@@ -24,5 +24,4 @@ jobs:
         with:
           name: openwrt-s905d-firmware
           path: |
-            openwrt_packit/*.img.gz
-            openwrt_packit/output/*
+            path: ${{ env.PACKAGED_OUTPUTPATH }}/*
