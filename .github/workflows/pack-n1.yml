@@ -19,3 +19,10 @@ jobs:
           KERNEL_VERSION_NAME: 6.12.y # 选择内核版本（可按需更改）
           KERNEL_AUTO_LATEST: true    # 自动匹配该系列最新内核
           OPENWRT_IP: 10.9.8.7     # 默认后台 IP
+- name: Upload OpenWrt Firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: openwrt-s905d-firmware
+          path: |
+            openwrt_packit/*.img.gz
+            openwrt_packit/output/*
