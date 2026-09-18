@@ -13,13 +13,13 @@ jobs:
       - name: Package OpenWrt for N1
         uses: ophub/flippy-openwrt-actions@main
         env:
-          # 将下方链接替换为你自己的 immortalwrt-armsr-armv8-generic-rootfs.tar.gz 真实直链
           OPENWRT_ARMSR: https://github.com/chenleilei1985-del/amlogic-s9xxx-openwrt-1-/releases/download/OpenWrt_immortalwrt_master_save_2026.09/immortalwrt-armsr-armv8-generic-rootfs.tar.gz
-          PACKAGE_SOC: s905d          # 斐讯 N1 芯片型号
-          KERNEL_VERSION_NAME: 6.12.y # 选择内核版本（可按需更改）
-          KERNEL_AUTO_LATEST: true    # 自动匹配该系列最新内核
-          OPENWRT_IP: 10.9.8.7     # 默认后台 IP
-- name: Upload OpenWrt Firmware
+          PACKAGE_SOC: s905d
+          KERNEL_VERSION_NAME: 6.12.y
+          KERNEL_AUTO_LATEST: true
+          OPENWRT_IP: 10.9.8.7
+
+      - name: Upload OpenWrt Firmware
         uses: actions/upload-artifact@v4
         with:
           name: openwrt-s905d-firmware
