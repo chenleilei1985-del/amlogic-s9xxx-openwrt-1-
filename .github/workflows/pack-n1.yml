@@ -2,26 +2,61 @@ name: Package N1 Firmware from URL
 
 on:
   workflow_dispatch:
+    inputs:
+      kernel_version:
+        description: "内核系列 (N1 建议 6.1.y)"
+        required: true
+        default: "6.1.y"
+        type: choice
+        options: ["6.1.y", "6.12.y", "6.18.y"]
+      openwrt_ip:
+        description: "固件默认管理 IP"
+        required: true
+        default: "192.168.1.200"
+
+permissions:
+  contents: write
 
 jobs:
   package:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Package OpenWrt for N1
+      - name: Package OpenWrt for N1 (s905d)
         uses: ophub/flippy-openwrt-actions@main
         env:
           OPENWRT_ARMSR: https://github.com/chenleilei1985-del/amlogic-s9xxx-openwrt-1-/releases/download/OpenWrt_immortalwrt_master_save_2026.09/immortalwrt-armsr-armv8-generic-rootfs.tar.gz
           PACKAGE_SOC: s905d
-          KERNEL_VERSION_NAME: 6.12.y
+          KERNEL_VERSION_NAME: ${{ inputs.kernel_version }}
           KERNEL_AUTO_LATEST: true
-          OPENWRT_IP: 10.9.8.7
+          OPENWRT_IP: ${{ inputs.openwrt_ip }}
+          OPENWRT_VER: R26.09.17
+          WHOAMI: cjy
+          GZIP_IMGS: .gz
+          SAVE_OPENWRT_ROOTFS: false
 
-      - name: Upload OpenWrt Firmware
+      - name: Upload OpenWrt Firmware (artifact, 备用)
+        if: ${{ env.PACKAGED_STATUS == 'success' }}
         uses: actions/upload-artifact@v4
         with:
-          name: openwrt-s905d-firmware
-          path: |
-            path: ${{ env.PACKAGED_OUTPUTPATH }}/*
+          name: openwrt-s905d-n1-firmware
+          path: ${{ env.PACKAGED_OUTPUTPATH }}/*
+          if-no-files-found: error
+
+      - name: Upload OpenWrt Firmware to Release
+        if: ${{ env.PACKAGED_STATUS == 'success' }}
+        uses: ophub/upload-to-releases@main
+        with:
+          tag: OpenWrt_N1_s905d_${{ env.PACKAGED_OUTPUTDATE }}
+          artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
+          allow_updates: true
+          remove_artifacts: false
+          replaces_artifacts: true
+          make_latest: true
+          gh_token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            Phicomm N1 (S905D) OpenWrt firmware - packaged with flippy openwrt_packit
+            * Default IP: 192.168.1.200  /  root  /  password
+            * Kernel: 6.1.x (Flippy)  |  Boot: USB or eMMC
